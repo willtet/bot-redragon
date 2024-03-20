@@ -1,6 +1,7 @@
 package dev.willtet;
 
 import dev.willtet.commands.Ping;
+import dev.willtet.events.PostPublish;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -20,5 +21,6 @@ public class Main {
                     EnumSet.allOf(GatewayIntent.class)).build();
 
             jda.addEventListener(new Ping());
+            jda.addEventListener(new PostPublish());
     }
 }
