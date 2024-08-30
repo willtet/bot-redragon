@@ -12,12 +12,12 @@ public class Cadastrar extends ListenerAdapter{
     public void onMessageReceived(MessageReceivedEvent event) {
         String[] args = event.getMessage().getContentRaw().split(" ");
         TextChannel textChannel = (TextChannel) event.getChannel();
-        if(event.getChannel().getId().equals("1221867194854408263")) {
+        if(event.getChannel().getId().equals("1203053040802865225")) {
         	if (args[0].equalsIgnoreCase("!"+"participar")){
                 boolean existe = DatabaseService.existeUsuarioCadastrado(event.getAuthor().getId());
                 
                 if(existe) {
-                	textChannel.sendMessage(event.getAuthor().getGlobalName() + " já está cadastrado no Legends").queue();
+                	textChannel.sendMessage(event.getAuthor().getGlobalName() + " já está cadastrado no SquadPro").queue();
                 }else {
                 	
                 	var status = DatabaseService.cadastrarUsuarioLegends(
@@ -26,10 +26,10 @@ public class Cadastrar extends ListenerAdapter{
                 			event.getAuthor().getId()
                 			);
                 	if(status) {
-                		Role aprendiz = event.getGuild().getRoleById("1219413736977072168");
+                		Role aprendiz = event.getGuild().getRoleById("1231960763770605588");
                 		
                 		event.getGuild().addRoleToMember(event.getAuthor(), aprendiz).queue();
-                    	textChannel.sendMessage(event.getAuthor().getGlobalName() + " acabou de se cadastrar no Legends!").queue();
+                    	textChannel.sendMessage(event.getAuthor().getGlobalName() + " acabou de se cadastrar no SquadPro!").queue();
                 	}else {
                     	textChannel.sendMessage("Teve um erro no seu cadastro, algum Staff pode te ajudar!").queue();
 
