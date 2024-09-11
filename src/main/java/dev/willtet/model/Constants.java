@@ -12,5 +12,6 @@ public class Constants {
     //Sala importante
     public static String POST_PUBLISH = "1216898300297482320";
 
-    public static String POST_LEGADO = "1225241652793184369";
+    public static String POST_LEGADO = "1272967732794494986";
+    public static String QUEST_DIARIO = "1270072766619582635";
 }

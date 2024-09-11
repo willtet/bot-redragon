@@ -5,6 +5,7 @@ import dev.willtet.model.vo.TopRankVO;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -65,7 +66,7 @@ public class DatabaseService {
 		}
 	}
 
-	public static boolean postPontosByUsuario(String idMensagem, String idUsuario, String mensagem) {
+	public static boolean postPontosByUsuario(String idMensagem, String idUsuario, String mensagem, int pontos) {
 		var conexao = ConnectionFactory.getConnection();
 
 
@@ -77,10 +78,10 @@ public class DatabaseService {
 
 			stm.setString(1, idMensagem);
 			stm.setString(2, idUsuario);
-			stm.setBoolean(3, false);
+			stm.setBoolean(3, true);
 			stm.setString(4, mensagem);
 			stm.setDate(5,  new Date(System.currentTimeMillis()));
-			stm.setInt(6,  1);
+			stm.setInt(6,  pontos);
 
 			stm.execute();
 			stm.close();
@@ -92,6 +93,8 @@ public class DatabaseService {
 			return false;
 		}
 	}
+
+
 
 	public static boolean postPontosByLegado(String idMensagem, String idUsuario, String mensagem, int pontos) {
 		var conexao = ConnectionFactory.getConnection();
@@ -177,13 +180,41 @@ public class DatabaseService {
 	}
 
 
+	public static boolean updatePontosByUsuarioEMessage(String idMensagem, String idUsuario, boolean valido) {
+		var conexao = ConnectionFactory.getConnection();
+
+
+		String query = "UPDATE tb_publicacao "
+				+ " SET valido = ? "
+				+ " WHERE id_mensagem = ?" +
+				"	AND id_usuario = ?";
+
+		try {
+			var stm = conexao.prepareStatement(query);
+
+			stm.setBoolean(1, valido);
+			stm.setString(2, idMensagem);
+			stm.setString(3, idUsuario);
+
+			stm.execute();
+			stm.close();
+
+			return true;
+		}catch (Exception e) {
+
+			e.getStackTrace();
+			return false;
+		}
+	}
+
+
 	public static String findRoleIdByPontos(int pontos) {
 
 		var conexao = ConnectionFactory.getConnection();
 		var count = "";
 
 
-		String query = "SELECT nome " +
+		String query = "SELECT id_discord " +
 				"FROM tb_roles " +
 				"WHERE ? BETWEEN min_range AND max_range;";
 
@@ -195,7 +226,7 @@ public class DatabaseService {
 			var retorno = stm.executeQuery();
 
 			if(retorno.next()) {
-				count = retorno.getString("nome");
+				count = retorno.getString("id_discord");
 			}
 
 			stm.close();
@@ -304,4 +335,90 @@ public class DatabaseService {
 		return ranking;
 	}
 
+
+	public static boolean isMessageRegisteredByIdUser(String idMensagem, String idUsuario) {
+
+		boolean isRegistered = false;
+		var conexao = ConnectionFactory.getConnection();
+		List<TopRankVO> ranking = new ArrayList<>();
+
+
+		String query = "SELECT " +
+				" 1 " +
+				" FROM tb_publicacao pubri " +
+				" WHERE pubri.id_mensagem = ? " +
+				" AND pubri.id_usuario = ? ";
+
+		try {
+			var stm = conexao.prepareStatement(query);
+
+			stm.setString(1, idMensagem);
+			stm.setString(2, idUsuario);
+
+			var retorno = stm.executeQuery();
+
+			if (retorno.next()) {
+				isRegistered = true;
+			}
+
+			stm.close();
+			retorno.close();
+		}catch (Exception e) {
+			e.getStackTrace();
+			return false;
+		}finally {
+			try {
+				if (conexao != null && !conexao.isClosed()) {
+					conexao.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return isRegistered;
+	}
+
+	public static boolean isValidoParaPontuarCollab(LocalDate hoje, LocalDate domingo, String mensagem) {
+		boolean isValido = true;
+		var conexao = ConnectionFactory.getConnection();
+		List<TopRankVO> ranking = new ArrayList<>();
+
+
+		String query = "SELECT " +
+				" 1 " +
+				" FROM tb_publicacao pubri" +
+				" WHERE pubri.data_entrada BETWEEN ? AND ? " +
+				" AND pubri.mensagem = ? ";
+
+		try {
+			var stm = conexao.prepareStatement(query);
+
+			stm.setObject(1, domingo);
+			stm.setObject(2, hoje);
+			stm.setString(3, mensagem);
+
+			var retorno = stm.executeQuery();
+
+			if (retorno.next()) {
+				isValido = false;
+			}
+
+			stm.close();
+			retorno.close();
+		}catch (Exception e) {
+			e.getStackTrace();
+			return false;
+		}finally {
+			try {
+				if (conexao != null && !conexao.isClosed()) {
+					conexao.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return isValido;
+	}
 }

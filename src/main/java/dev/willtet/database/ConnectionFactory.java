@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class ConnectionFactory {
     public static Connection getConnection(){
-    	String url = "jdbc:mysql://191.101.71.197:3306/files_discordbot_db?autoReconnect=true&useSSL=false";
-        String user = "files_discord";
-        String password = "CzsCDI^BPs+yr0Kk";
+        String url = System.getenv("c");
+        String user = System.getenv("BOT_DB_USER");
+        String password = System.getenv("BOT_DB_PASS");
 
         try{
             Connection myConn = DriverManager.getConnection(url,user,password);

@@ -39,7 +39,7 @@ public class PostPublish extends ListenerAdapter {
             //Recuperar o usuario pelo id
 
             //Adicionar
-            DatabaseService.postPontosByUsuario(idMensagem, idAutor, mensagem);
+            //DatabaseService.postPontosByUsuario(idMensagem, idAutor, mensagem);
 
             Member user =  event.getGuild().getMemberById("158732504239439872");
 

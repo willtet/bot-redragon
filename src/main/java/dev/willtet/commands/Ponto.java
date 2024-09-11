@@ -24,15 +24,15 @@ public class Ponto extends ListenerAdapter {
 
         if (args[0].equalsIgnoreCase("!"+"pontos")){
             int pontos = DatabaseService.findPontosByUsuario(event.getAuthor().getId());
-            String role = DatabaseService.findRoleIdByPontos(pontos);
             Role roles = DatabaseService.findRoleByPontos(pontos);
 
             int pontoFaltante = (roles.getMaxRange() + 1) - pontos;
 
-            textChannel.sendMessage(event.getAuthor().getGlobalName() + " está com "+ pontos+" pontos. \r" +
-                    "- Nível atual: "+role+". \r" +
-                    "- Ponto faltante para proximo nível: " + pontoFaltante).queue();
-
+            event.getAuthor().openPrivateChannel().queue((privateChannel) -> {
+                privateChannel.sendMessage(event.getAuthor().getGlobalName() + " está com "+ pontos+" pontos. \r" +
+                        "- Nível atual: "+roles.getNome()+". \r" +
+                        "- Ponto faltante para proximo nível: " + pontoFaltante).queue();
+            });
 
         }
 
