@@ -14,15 +14,14 @@ public class DatabaseService {
 	
 	public static boolean existeUsuarioCadastrado(String idDiscord) {
 		boolean existe = false;
-		
-		var conexao = ConnectionFactory.getConnection();
-		String query = 
-				"SELECT * FROM tb_usuarios WHERE id = ? ";
+
+		String query = 	"SELECT * FROM tb_usuarios WHERE id = ? ";
 		
 		
 		
-		try {
-			var stm = conexao.prepareStatement(query);
+		try (var conexao = ConnectionFactory.getConnection();
+			 var stm = conexao.prepareStatement(query)) {
+
 			
 			stm.setString(1, idDiscord);
 			
@@ -31,50 +30,43 @@ public class DatabaseService {
 			if(retorno.next()) {
 				existe = true;
 			}
-			
-			
-			stm.close();
+
 			return existe;
 		}catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 	public static boolean cadastrarUsuarioLegends(String globalName, String name, String id) {
-		var conexao = ConnectionFactory.getConnection();
 		String query = "INSERT INTO tb_usuarios (id, name, username, data_entrada)"
-				+ " VALUES (?, ?, ?, ?) ";
-		
-		
-		
-		try {
-			var stm = conexao.prepareStatement(query);
-			
+				+ " VALUES (?, ?, ?, ?)";
+
+		// Bloco try-with-resources para garantir que a conexão e o PreparedStatement sejam fechados
+		try (var conexao = ConnectionFactory.getConnection();
+			 var stm = conexao.prepareStatement(query)) {
+
 			stm.setString(1, id);
 			stm.setString(2, globalName);
 			stm.setString(3, name);
-			stm.setDate(4,  new Date(System.currentTimeMillis()));
-			
+			stm.setDate(4, new java.sql.Date(System.currentTimeMillis())); // ou setTimestamp() se necessário
+
 			stm.execute();
-			stm.close();
-			
 			return true;
-		}catch (Exception e) {
-			
-			e.getStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace(); // Corrigir para imprimir o stack trace
 			return false;
 		}
 	}
 
 	public static boolean postPontosByUsuario(String idMensagem, String idUsuario, String mensagem, int pontos) {
-		var conexao = ConnectionFactory.getConnection();
-
 
 		String query = "INSERT INTO tb_publicacao (id_mensagem, id_usuario, valido, mensagem, data_entrada, ponto_peso)"
 				+ " VALUES (?, ?, ?, ?, ?, ?)";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try(var conexao = ConnectionFactory.getConnection();
+			var stm = conexao.prepareStatement(query)) {
+
 
 			stm.setString(1, idMensagem);
 			stm.setString(2, idUsuario);
@@ -84,12 +76,11 @@ public class DatabaseService {
 			stm.setInt(6,  pontos);
 
 			stm.execute();
-			stm.close();
 
 			return true;
 		}catch (Exception e) {
 
-			e.getStackTrace();
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -97,14 +88,15 @@ public class DatabaseService {
 
 
 	public static boolean postPontosByLegado(String idMensagem, String idUsuario, String mensagem, int pontos) {
-		var conexao = ConnectionFactory.getConnection();
+
 
 
 		String query = "INSERT INTO tb_publicacao (id_mensagem, id_usuario, valido, mensagem, data_entrada, ponto_peso)"
 				+ " VALUES (?, ?, ?, ?, ?, ?)";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try(var conexao = ConnectionFactory.getConnection();
+			var stm = conexao.prepareStatement(query)){
+
 
 			stm.setString(1, idMensagem);
 			stm.setString(2, idUsuario);
@@ -114,19 +106,17 @@ public class DatabaseService {
 			stm.setInt(6,  pontos);
 
 			stm.execute();
-			stm.close();
 
 			return true;
 		}catch (Exception e) {
-
-			e.getStackTrace();
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 
 	public static int findPontosByUsuario(String idUsuario) {
-		var conexao = ConnectionFactory.getConnection();
+
 		var count = 0;
 
 
@@ -134,83 +124,78 @@ public class DatabaseService {
 				+ " WHERE valido = 1"
 				+ " AND id_usuario = ?";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try(var conexao = ConnectionFactory.getConnection();
+			var stm = conexao.prepareStatement(query)	) {
 
 			stm.setString(1, idUsuario);
 
-			var retorno = stm.executeQuery();
-
-			if(retorno.next()) {
-				count = retorno.getInt("Soma");
+			try(var retorno = stm.executeQuery();){
+				if(retorno.next()) {
+					count = retorno.getInt("Soma");
+				}
 			}
 
-			stm.close();
 			return count;
 		}catch (Exception e) {
 
-			e.getStackTrace();
+			e.printStackTrace();
 			return 0;
 		}
 	}
 
 	public static boolean updatePontosByUsuario(String idMensagem, boolean valido) {
-		var conexao = ConnectionFactory.getConnection();
-
-
 		String query = "UPDATE tb_publicacao "
 				+ " SET valido = ? "
 				+ " WHERE id_mensagem = ?";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query)
+				) {
+
 
 			stm.setBoolean(1, valido);
 			stm.setString(2, idMensagem);
 
 			stm.execute();
-			stm.close();
 
 			return true;
 		}catch (Exception e) {
 
-			e.getStackTrace();
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 
 	public static boolean updatePontosByUsuarioEMessage(String idMensagem, String idUsuario, boolean valido) {
-		var conexao = ConnectionFactory.getConnection();
-
-
 		String query = "UPDATE tb_publicacao "
 				+ " SET valido = ? "
 				+ " WHERE id_mensagem = ?" +
 				"	AND id_usuario = ?";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+				) {
+
 
 			stm.setBoolean(1, valido);
 			stm.setString(2, idMensagem);
 			stm.setString(3, idUsuario);
 
 			stm.execute();
-			stm.close();
 
 			return true;
 		}catch (Exception e) {
 
-			e.getStackTrace();
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 
 	public static String findRoleIdByPontos(int pontos) {
-
-		var conexao = ConnectionFactory.getConnection();
 		var count = "";
 
 
@@ -218,78 +203,61 @@ public class DatabaseService {
 				"FROM tb_roles " +
 				"WHERE ? BETWEEN min_range AND max_range;";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try (
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+				){
 
 			stm.setInt(1, pontos);
 
-			var retorno = stm.executeQuery();
-
-			if(retorno.next()) {
-				count = retorno.getString("id_discord");
+			try(var retorno = stm.executeQuery();){
+				if(retorno.next()) {
+					count = retorno.getString("id_discord");
+				}
 			}
-
-			stm.close();
 			return count;
 		}catch (Exception e) {
 
-			e.getStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}
 
 	public static Role findRoleByPontos(int pontos) {
-
-		var conexao = ConnectionFactory.getConnection();
 		Role role = null;
-
-
 		String query = "SELECT role.* " +
 				"FROM tb_roles role " +
 				"WHERE ? BETWEEN min_range AND max_range;";
 
-		try {
-			var stm = conexao.prepareStatement(query);
-
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+				) {
 			stm.setInt(1, pontos);
 
-			var retorno = stm.executeQuery();
-
-			if (retorno.next()) {
-				// Supondo que a classe Role tenha um construtor que aceita os parâmetros correspondentes às colunas da tabela
-				role = new Role(
-						retorno.getInt("id"),
-						retorno.getString("nome"),
-						retorno.getInt("min_range"),
-						retorno.getInt("max_range"),
-						retorno.getString("id_discord")
-				);
+			try(var retorno = stm.executeQuery();){
+				if (retorno.next()) {
+					role = new Role(
+							retorno.getInt("id"),
+							retorno.getString("nome"),
+							retorno.getInt("min_range"),
+							retorno.getInt("max_range"),
+							retorno.getString("id_discord")
+					);
+				}
 			}
 
-			stm.close();
-			retorno.close();
 		}catch (Exception e) {
 
-			e.getStackTrace();
+			e.printStackTrace();
 			return null;
-		}finally {
-			try {
-				if (conexao != null && !conexao.isClosed()) {
-					conexao.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 
 		return role;
 	}
 
 	public static List<TopRankVO> findTopRanking() {
-
-		var conexao = ConnectionFactory.getConnection();
 		List<TopRankVO> ranking = new ArrayList<>();
-
 
 		String query = "SELECT " +
 				" sum(pubri.ponto_peso) pontos, " +
@@ -301,35 +269,27 @@ public class DatabaseService {
 				" ORDER BY pontos DESC " +
 				" LIMIT 25";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+				) {
 
-			var retorno = stm.executeQuery();
 
-			while (retorno.next()) {
+			try(var retorno = stm.executeQuery()){
+				while (retorno.next()) {
 
-				TopRankVO vo = new TopRankVO(
+					TopRankVO vo = new TopRankVO(
 							retorno.getInt("pontos"),
 							retorno.getString("nome")
 					);
 
-				ranking.add(vo);
+					ranking.add(vo);
+				}
 			}
-
-			stm.close();
-			retorno.close();
 		}catch (Exception e) {
 
-			e.getStackTrace();
+			e.printStackTrace();
 			return null;
-		}finally {
-			try {
-				if (conexao != null && !conexao.isClosed()) {
-					conexao.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 
 		return ranking;
@@ -339,8 +299,6 @@ public class DatabaseService {
 	public static boolean isMessageRegisteredByIdUser(String idMensagem, String idUsuario) {
 
 		boolean isRegistered = false;
-		var conexao = ConnectionFactory.getConnection();
-		List<TopRankVO> ranking = new ArrayList<>();
 
 
 		String query = "SELECT " +
@@ -349,31 +307,21 @@ public class DatabaseService {
 				" WHERE pubri.id_mensagem = ? " +
 				" AND pubri.id_usuario = ? ";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+				) {
 
 			stm.setString(1, idMensagem);
 			stm.setString(2, idUsuario);
 
-			var retorno = stm.executeQuery();
-
-			if (retorno.next()) {
-				isRegistered = true;
-			}
-
-			stm.close();
-			retorno.close();
-		}catch (Exception e) {
-			e.getStackTrace();
-			return false;
-		}finally {
-			try {
-				if (conexao != null && !conexao.isClosed()) {
-					conexao.close();
+			try(var retorno = stm.executeQuery();){
+				if (retorno.next()) {
+					isRegistered = true;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return isRegistered;
@@ -381,9 +329,6 @@ public class DatabaseService {
 
 	public static boolean isValidoParaPontuarCollab(LocalDate hoje, LocalDate domingo, String mensagem) {
 		boolean isValido = true;
-		var conexao = ConnectionFactory.getConnection();
-		List<TopRankVO> ranking = new ArrayList<>();
-
 
 		String query = "SELECT " +
 				" 1 " +
@@ -391,32 +336,25 @@ public class DatabaseService {
 				" WHERE pubri.data_entrada BETWEEN ? AND ? " +
 				" AND pubri.mensagem = ? ";
 
-		try {
-			var stm = conexao.prepareStatement(query);
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+				){
+
 
 			stm.setObject(1, domingo);
 			stm.setObject(2, hoje);
 			stm.setString(3, mensagem);
 
-			var retorno = stm.executeQuery();
 
-			if (retorno.next()) {
-				isValido = false;
-			}
-
-			stm.close();
-			retorno.close();
-		}catch (Exception e) {
-			e.getStackTrace();
-			return false;
-		}finally {
-			try {
-				if (conexao != null && !conexao.isClosed()) {
-					conexao.close();
+			try(var retorno = stm.executeQuery();){
+				if (retorno.next()) {
+					isValido = false;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
+
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return isValido;

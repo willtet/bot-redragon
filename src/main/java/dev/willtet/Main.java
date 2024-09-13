@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import javax.security.auth.login.LoginException;
 
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.TimeZone;
 
@@ -21,6 +22,7 @@ public class Main {
 
     public static void main(String[] args) throws LoginException, InterruptedException {
         TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
+        System.out.println("Current Date: "+new Date());
 
         jda = JDABuilder.create(
                 System.getenv("BOT_TOKEN"),

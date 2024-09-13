@@ -1,6 +1,10 @@
 package dev.willtet.room;
 
 import dev.willtet.database.DatabaseService;
+import dev.willtet.enumeration.RoleEnum;
+import dev.willtet.model.Constants;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -39,8 +43,18 @@ public class CadastroRoom extends ListenerAdapter {
                         privateChannel.sendMessage(event.getUser().getGlobalName() + " acabou de se cadastrar no SquadPro!").queue();
                     });
                 }else {
-                    textChannel.sendMessage("Teve um erro no seu cadastro, algum Staff pode te ajudar!").queue();
-
+                    Guild guild = event.getGuild();
+                    Role modRole = guild.getRoleById(RoleEnum.MOD.getId());
+                    for (Member member : guild.getMembersWithRoles(modRole)) {
+                        // Abre o canal privado e envia a mensagem
+                        member.getUser().openPrivateChannel().queue(privateChannel -> {
+                            privateChannel.sendMessage("Mensagem para Moderadores! Houve um erro do cadastro de um usuário no servidor SquadPro! \r" +
+                                    "Dados: \r" +
+                                    "- GlobalUserName -> " + event.getUser().getGlobalName() + " \r" +
+                                    "- Name -> " + event.getUser().getName() + " \r" +
+                                    "- UserId -> " + event.getUser().getId() + " \r").queue();
+                        });
+                    }
                 }
             }
         }
