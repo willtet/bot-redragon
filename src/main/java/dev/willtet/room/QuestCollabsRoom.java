@@ -4,7 +4,6 @@ import dev.willtet.database.DatabaseService;
 import dev.willtet.enumeration.RoleEnum;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
@@ -37,7 +35,7 @@ public class QuestCollabsRoom extends ListenerAdapter implements BaseRoom{
 
                         var mensagem = String.format("QUEST COLLABS - %d pontos", pontoDecidido);
 
-                        if(DatabaseService.isValidoParaPontuarCollab(hoje, domingo, mensagem)){
+                        if(DatabaseService.isValidoParaPontuarSemanal(hoje, domingo, mensagem, event.getMessageAuthorId())){
                             DatabaseService.postPontosByUsuario(
                                     event.getMessageId(),
                                     event.getMessageAuthorId(),

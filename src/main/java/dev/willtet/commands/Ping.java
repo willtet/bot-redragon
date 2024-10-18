@@ -12,12 +12,16 @@ public class Ping extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String[] args = event.getMessage().getContentRaw().split(" ");
-        TextChannel textChannel = (TextChannel) event.getChannel();
-
-        if (args[0].equalsIgnoreCase("!"+"ping")){
-            textChannel.sendMessage(Long.toString(Main.jda.getGatewayPing())).queue();
 
 
+        if (event.getChannel() instanceof TextChannel) {
+            TextChannel textChannel = (TextChannel) event.getChannel();
+
+            if (args[0].equalsIgnoreCase("!"+"ping")){
+                textChannel.sendMessage(Long.toString(Main.jda.getGatewayPing())).queue();
+
+
+            }
         }
     }
 }

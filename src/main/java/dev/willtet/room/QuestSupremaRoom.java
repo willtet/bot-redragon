@@ -11,8 +11,10 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 public class QuestSupremaRoom extends ListenerAdapter implements BaseRoom{
@@ -29,12 +31,18 @@ public class QuestSupremaRoom extends ListenerAdapter implements BaseRoom{
                 }else{
                     var mensagem = String.format("QUEST SUPREMA - 1000 pontos");
 
-                    DatabaseService.postPontosByUsuario(
-                            event.getMessageId(),
-                            event.getMessageAuthorId(),
-                            mensagem,
-                            1000
-                    );
+                    LocalDate hoje = LocalDate.now();
+                    LocalDate fimDaSeason = LocalDate.of(2024, 12, 20);
+
+                    if(DatabaseService.isValidoParaPontuarSemanal(hoje, fimDaSeason, mensagem, event.getMessageAuthorId())){
+                        DatabaseService.postPontosByUsuario(
+                                event.getMessageId(),
+                                event.getMessageAuthorId(),
+                                mensagem,
+                                1000
+                        );
+                    }
+
                 }
             }
 

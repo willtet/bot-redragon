@@ -1,14 +1,14 @@
 package dev.willtet.database;
 
+import dev.willtet.model.Publicacao;
 import dev.willtet.model.Role;
+import dev.willtet.model.User;
 import dev.willtet.model.vo.TopRankVO;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class DatabaseService {
 	
@@ -45,6 +45,7 @@ public class DatabaseService {
 		// Bloco try-with-resources para garantir que a conexão e o PreparedStatement sejam fechados
 		try (var conexao = ConnectionFactory.getConnection();
 			 var stm = conexao.prepareStatement(query)) {
+
 
 			stm.setString(1, id);
 			stm.setString(2, globalName);
@@ -140,6 +141,43 @@ public class DatabaseService {
 
 			e.printStackTrace();
 			return 0;
+		}
+	}
+
+	public static List<Publicacao> findPublicacaoByUsuario(String idUsuario) {
+
+		List<Publicacao> publis = new ArrayList<>();
+
+		String query = "SELECT tp.* FROM tb_publicacao tp"
+				+ " WHERE tp.valido = 1"
+				+ " AND tp.id_usuario = ?";
+
+		try(var conexao = ConnectionFactory.getConnection();
+			var stm = conexao.prepareStatement(query)	) {
+
+			stm.setString(1, idUsuario);
+
+			try(var retorno = stm.executeQuery();){
+				while(retorno.next()) {
+					Publicacao publi = new Publicacao(
+							retorno.getLong("id"),
+							retorno.getString("id_mensagem"),
+							retorno.getString("id_usuario"),
+							retorno.getBoolean("valido"),
+							retorno.getString("mensagem"),
+							retorno.getInt("ponto_peso"),
+							retorno.getDate("data_entrada")
+					);
+
+					publis.add(publi);
+				}
+			}
+
+			return publis;
+		}catch (Exception e) {
+
+			e.printStackTrace();
+			return publis;
 		}
 	}
 
@@ -265,6 +303,7 @@ public class DatabaseService {
 				" FROM tb_publicacao pubri " +
 				" INNER JOIN tb_usuarios tu " +
 				" ON tu.id = pubri.id_usuario " +
+				" WHERE pubri.valido = 1 " +
 				" GROUP BY id_usuario " +
 				" ORDER BY pontos DESC " +
 				" LIMIT 25";
@@ -327,14 +366,15 @@ public class DatabaseService {
 		return isRegistered;
 	}
 
-	public static boolean isValidoParaPontuarCollab(LocalDate hoje, LocalDate domingo, String mensagem) {
+	public static boolean isValidoParaPontuarSemanal(LocalDate hoje, LocalDate domingo, String mensagem, String idUsuario) {
 		boolean isValido = true;
 
 		String query = "SELECT " +
 				" 1 " +
 				" FROM tb_publicacao pubri" +
 				" WHERE pubri.data_entrada BETWEEN ? AND ? " +
-				" AND pubri.mensagem = ? ";
+				" AND pubri.mensagem = ? " +
+				" AND pubri.id_usuario = ? ;";
 
 		try(
 				var conexao = ConnectionFactory.getConnection();
@@ -345,6 +385,7 @@ public class DatabaseService {
 			stm.setObject(1, domingo);
 			stm.setObject(2, hoje);
 			stm.setString(3, mensagem);
+			stm.setString(4, idUsuario);
 
 
 			try(var retorno = stm.executeQuery();){
@@ -359,4 +400,36 @@ public class DatabaseService {
 
 		return isValido;
 	}
+	public static User findUserById(String idUser) {
+		User user = null;
+		String query = "SELECT user.* " +
+				"FROM tb_usuarios user " +
+				"WHERE id = ?;";
+
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+		) {
+			stm.setString(1, idUser);
+
+			try(var retorno = stm.executeQuery();){
+				if (retorno.next()) {
+					user = new User(
+							retorno.getString("id"),
+							retorno.getString("name"),
+							retorno.getString("username"),
+							retorno.getDate("data_entrada")
+					);
+				}
+			}
+
+		}catch (Exception e) {
+
+			e.printStackTrace();
+			return null;
+		}
+
+		return user;
+	}
+
 }

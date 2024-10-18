@@ -10,8 +10,12 @@ public class Constants {
 
 
     //Sala importante
+    public static String TESTE = "1272967732794494986";
+    public static String CADASTRO_SQUAD = "1203053040802865225";
     public static String POST_PUBLISH = "1216898300297482320";
 
     public static String POST_LEGADO = "1272967732794494986";
     public static String QUEST_DIARIO = "1270072766619582635";
+
+    public static String MODCOMANDO = "1285394394492698677";
 }

@@ -14,20 +14,23 @@ public class TopRank extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String[] args = event.getMessage().getContentRaw().split(" ");
-        TextChannel textChannel = (TextChannel) event.getChannel();
+        if (event.getChannel() instanceof TextChannel) {
+            TextChannel textChannel = (TextChannel) event.getChannel();
 
-        if (args[0].equalsIgnoreCase("!"+"rank")){
-            List<TopRankVO> listaRank = DatabaseService.findTopRanking();
-            String retorno = "";
-            int rank = 1;
+            if (args[0].equalsIgnoreCase("!"+"rank")){
+                List<TopRankVO> listaRank = DatabaseService.findTopRanking();
+                String retorno = "";
+                int rank = 1;
 
-            for(TopRankVO vo: listaRank){
-                retorno += rank + " - " + vo.getNome() + " \r";
-                rank++;
+                for(TopRankVO vo: listaRank){
+                    retorno += rank + " - " + vo.getNome() + " - " + vo.getPontos() + " pontos" + " \r";
+                    rank++;
+                }
+
+                textChannel.sendMessage(retorno).queue();
             }
-
-            textChannel.sendMessage(retorno).queue();
         }
+
 
 
     }

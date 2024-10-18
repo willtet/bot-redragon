@@ -11,8 +11,10 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 public class QuestSemanalRoom extends ListenerAdapter implements BaseRoom{
@@ -28,14 +30,20 @@ public class QuestSemanalRoom extends ListenerAdapter implements BaseRoom{
                 if(isMessageRegistered(event)){
                     DatabaseService.updatePontosByUsuarioEMessage(event.getMessageId(), event.getUserId(), true);
                 }else{
-                    var mensagem = String.format("QUEST SEMANAL - 200 pontos");
+                    var mensagem = String.format("QUEST SEMANAL - 250 pontos");
 
-                    DatabaseService.postPontosByUsuario(
-                            event.getMessageId(),
-                            event.getMessageAuthorId(),
-                            mensagem,
-                            200
-                    );
+                    LocalDate hoje = LocalDate.now();
+                    LocalDate sabado = hoje.with(TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
+
+                    if(DatabaseService.isValidoParaPontuarSemanal(hoje, sabado, mensagem, event.getMessageAuthorId())){
+                        DatabaseService.postPontosByUsuario(
+                                event.getMessageId(),
+                                event.getMessageAuthorId(),
+                                mensagem,
+                                250
+                        );
+                    }
+
                 }
             }
 

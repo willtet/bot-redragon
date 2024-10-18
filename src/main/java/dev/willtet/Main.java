@@ -5,6 +5,7 @@ import dev.willtet.events.PostPublish;
 import dev.willtet.jobs.MessageScheduler;
 import dev.willtet.model.Constants;
 import dev.willtet.room.*;
+import dev.willtet.trigger.RoleListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -34,12 +35,15 @@ public class Main {
 
         MessageScheduler scheduler = new MessageScheduler(jda);
 
+        //Comandos
         jda.addEventListener(new Ping());
-        jda.addEventListener(new PostPublish());
-        jda.addEventListener(new Cadastrar());
+        //jda.addEventListener(new PostPublish());
+        //jda.addEventListener(new Cadastrar());
         jda.addEventListener(new Publicacao());
         jda.addEventListener(new Ponto());
         jda.addEventListener(new Legado());
+        jda.addEventListener(new Usuario());
+
         // SQUADPRO
         jda.addEventListener(new TopRank());
         jda.addEventListener(new CadastroRoom());
@@ -48,6 +52,8 @@ public class Main {
         jda.addEventListener(new QuestSupremaRoom());
         jda.addEventListener(new QuestCollabsRoom());
         jda.addEventListener(new QuestSurpresaRoom());
+        jda.addEventListener(new RoleListener());
+
 
 
         //JOBS
