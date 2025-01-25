@@ -32,9 +32,9 @@ public class MessageScheduler {
         // Agendador de tarefas
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-        // Calcula o tempo até 13:50 de hoje
+        // Calcula o tempo até x de hoje
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime targetTime = now.withHour(06).withMinute(00).withSecond(0).withNano(0);
+        LocalDateTime targetTime = now.withHour(6).withMinute(00).withSecond(0).withNano(0);
 
         // Se o horário alvo já passou, agenda para o dia seguinte
         if (now.isAfter(targetTime)) {

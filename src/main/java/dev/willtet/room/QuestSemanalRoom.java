@@ -27,7 +27,7 @@ public class QuestSemanalRoom extends ListenerAdapter implements BaseRoom{
 
                 var emojiValido = Emoji.fromUnicode("U+1F44D");
 
-                if(isMessageRegistered(event)){
+                if(isMessageRegistered(event.getMessageId(), event.getMessageAuthorId())){
                     DatabaseService.updatePontosByUsuarioEMessage(event.getMessageId(), event.getUserId(), true);
                 }else{
                     var mensagem = String.format("QUEST SEMANAL - 250 pontos");
@@ -52,11 +52,9 @@ public class QuestSemanalRoom extends ListenerAdapter implements BaseRoom{
         }
     }
 
-    private boolean isMessageRegistered(GenericMessageReactionEvent event) {
-        String idMsg = event.getMessageId();
-        String idUser = event.getUserId();
+    private boolean isMessageRegistered(String idMsg, String idUserAuthor) {
 
-        return DatabaseService.isMessageRegisteredByIdUser(idMsg, idUser);
+        return DatabaseService.isMessageRegisteredByIdUser(idMsg, idUserAuthor);
     }
 
     @Override
@@ -72,7 +70,7 @@ public class QuestSemanalRoom extends ListenerAdapter implements BaseRoom{
                 boolean isToday = dateOnly.isEqual(today);
 
                 if(isToday){
-                    if(isMessageRegistered(event)){
+                    if(isMessageRegistered(event.getMessageId(), message.getAuthor().getId())){
                         DatabaseService.updatePontosByUsuarioEMessage(event.getMessageId(), message.getAuthor().getId(), false);
                     }
                 }

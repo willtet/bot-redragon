@@ -1,13 +1,26 @@
 package dev.willtet.enumeration;
 
 public enum SalaEnum {
-    APRENDIZ("1219409485764886590"),
-    ESCUDEIRO("1219409748101828778"),
-    CAVALEIRO("1219409809720344628"),
-    PALADINO("1219409880411013170"),
-    DRAGONNIGHT("1219410027073245285");
+
+    MISSAOEXTRA1("1326618028720525353"),
+    MISSAOEXTRA2("1326618055135985728"),
+    MISSAOEXTRA3("1326618080561991744"),
+    MISSAOEXTRA4("1326618189416632333"),
+    MISSAOEXTRA5("1326618213827739669"),
+
+    MISSAODIARIOEXRA("1332021455281455184"),
+
+    MODNOTIFICACAO("1284207912473989200");
 
 
-    SalaEnum(String s) {
+
+    private final String id;
+
+    SalaEnum(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 }

@@ -43,6 +43,9 @@ public class Main {
         jda.addEventListener(new Ponto());
         jda.addEventListener(new Legado());
         jda.addEventListener(new Usuario());
+        jda.addEventListener(new DevFiltro());
+        jda.addEventListener(new ResetCargo());
+        jda.addEventListener(new ParceriaSquadProPrivate());
 
         // SQUADPRO
         jda.addEventListener(new TopRank());
@@ -53,6 +56,8 @@ public class Main {
         jda.addEventListener(new QuestCollabsRoom());
         jda.addEventListener(new QuestSurpresaRoom());
         jda.addEventListener(new RoleListener());
+        jda.addEventListener(new QuestExtraRoom());
+        jda.addEventListener(new QuestDiarioExtraRoom());
 
 
 

@@ -26,8 +26,8 @@ public class QuestSurpresaRoom extends ListenerAdapter implements BaseRoom{
 
                 var emojiValido = Emoji.fromUnicode("U+1F44D");
 
-                if(isMessageRegistered(event)){
-                    DatabaseService.updatePontosByUsuarioEMessage(event.getMessageId(), event.getUserId(), true);
+                if(isMessageRegistered(event.getMessageId(), event.getMessageAuthorId())){
+                    DatabaseService.updatePontosByUsuarioEMessage(event.getMessageId(), event.getMessageAuthorId(), true);
                 }else{
                     var mensagem = String.format("QUEST SURPRESA - 200 pontos");
 
@@ -52,11 +52,9 @@ public class QuestSurpresaRoom extends ListenerAdapter implements BaseRoom{
         }
     }
 
-    private boolean isMessageRegistered(GenericMessageReactionEvent event) {
-        String idMsg = event.getMessageId();
-        String idUser = event.getUserId();
+    private boolean isMessageRegistered(String idMsg, String idUserAuthor) {
 
-        return DatabaseService.isMessageRegisteredByIdUser(idMsg, idUser);
+        return DatabaseService.isMessageRegisteredByIdUser(idMsg, idUserAuthor);
     }
 
     @Override
@@ -72,7 +70,7 @@ public class QuestSurpresaRoom extends ListenerAdapter implements BaseRoom{
                 boolean isToday = dateOnly.isEqual(today);
 
                 if(isToday){
-                    if(isMessageRegistered(event)){
+                    if(isMessageRegistered(event.getMessageId(), message.getAuthor().getId())){
                         DatabaseService.updatePontosByUsuarioEMessage(event.getMessageId(), message.getAuthor().getId(), false);
                     }
                 }

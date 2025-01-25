@@ -73,10 +73,21 @@ public class Ponto extends ListenerAdapter {
 
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-                    for(Publicacao pub : publis){
-                        builder.append("- "+pub.getPontoPeso() + " - "+pub.getMensagem() + " - Obtido em: "+ formatter.format(pub.getDataEntrada())).append("\r");
+//                    for(Publicacao pub : publis){
+//                        builder.append("- "+pub.getPontoPeso() + " - "+pub.getMensagem() + " - Obtido em: "+ formatter.format(pub.getDataEntrada())).append("\r");
+//
+//                    }
 
-                    }
+                    publis.stream()
+                            .sorted((p1, p2) -> p2.getDataEntrada().compareTo(p1.getDataEntrada()))
+                            .limit(15) // Skip all but the last 15 items
+                            .forEach(pub -> {
+                                builder.append("- " + pub.getPontoPeso() + " - " + pub.getMensagem() + " - Obtido em: "
+                                                + formatter.format(pub.getDataEntrada()))
+                                        .append("\r");
+                            });
+
+
 
                     textChannel.sendMessage(builder.toString()).queue();
 

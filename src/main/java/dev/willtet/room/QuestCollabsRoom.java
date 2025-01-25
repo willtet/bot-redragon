@@ -27,7 +27,7 @@ public class QuestCollabsRoom extends ListenerAdapter implements BaseRoom{
 
                 if(pontoDecidido > 0){
                     if(isMessageRegistered(event)){
-                        DatabaseService.updatePontosByUsuarioEMessage(event.getMessageId(), event.getUserId(), true);
+                        DatabaseService.updatePontosByUsuarioEMessage(event.getMessageId(), event.getMessageAuthorId(), true);
                     }else{
                         LocalDate hoje = LocalDate.now();
                         LocalDate domingo = hoje.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));

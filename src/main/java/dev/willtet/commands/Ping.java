@@ -1,6 +1,7 @@
 package dev.willtet.commands;
 
 import dev.willtet.Main;
+import dev.willtet.model.Constants;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
@@ -18,9 +19,9 @@ public class Ping extends ListenerAdapter {
             TextChannel textChannel = (TextChannel) event.getChannel();
 
             if (args[0].equalsIgnoreCase("!"+"ping")){
-                textChannel.sendMessage(Long.toString(Main.jda.getGatewayPing())).queue();
-
-
+                if (event.getChannel().getId().equals(Constants.MODCOMANDO)){
+                    textChannel.sendMessage(Long.toString(Main.jda.getGatewayPing())).queue();
+                }
             }
         }
     }
