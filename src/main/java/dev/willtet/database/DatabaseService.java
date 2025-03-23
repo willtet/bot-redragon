@@ -432,4 +432,54 @@ public class DatabaseService {
 		return user;
 	}
 
+	public static boolean isValidoCadastrarCodigoInfluencer(String codigo) {
+		boolean isValido = true;
+
+		String query = "SELECT " +
+				" 1 " +
+				" FROM tb_tb_sorteio_influencer sorteio" +
+				" WHERE sorteio.codigo = ? ;";
+
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+		){
+
+
+			stm.setString(1, codigo);
+
+
+			try(var retorno = stm.executeQuery();){
+				if (retorno.next()) {
+					isValido = false;
+				}
+			}
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return isValido;
+	}
+
+	public static boolean postCodigoInfluencer(String codigo, String idUsuario) {
+		String query = "INSERT INTO tb_sorteio_influencer (codigo, usuario_id)"
+				+ " VALUES (?, ?)";
+
+		try(var conexao = ConnectionFactory.getConnection();
+			var stm = conexao.prepareStatement(query)) {
+
+
+			stm.setString(1, codigo);
+			stm.setString(2, idUsuario);
+
+			stm.execute();
+
+			return true;
+		}catch (Exception e) {
+
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

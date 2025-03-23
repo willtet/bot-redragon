@@ -46,6 +46,7 @@ public class Main {
         jda.addEventListener(new DevFiltro());
         jda.addEventListener(new ResetCargo());
         jda.addEventListener(new ParceriaSquadProPrivate());
+        jda.addEventListener(new CodigoInfluencerSorteio());
 
         // SQUADPRO
         jda.addEventListener(new TopRank());
