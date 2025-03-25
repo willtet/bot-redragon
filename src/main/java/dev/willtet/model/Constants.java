@@ -18,4 +18,6 @@ public class Constants {
     public static String QUEST_DIARIO = "1270072766619582635";
 
     public static String MODCOMANDO = "1285394394492698677";
+
+    public static String CADASTRO_COD_INFLUENCER = "1353842581619871865";
 }

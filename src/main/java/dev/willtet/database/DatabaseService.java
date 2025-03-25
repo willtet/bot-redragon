@@ -437,7 +437,7 @@ public class DatabaseService {
 
 		String query = "SELECT " +
 				" 1 " +
-				" FROM tb_tb_sorteio_influencer sorteio" +
+				" FROM tb_sorteio_influencer sorteio" +
 				" WHERE sorteio.codigo = ? ;";
 
 		try(
@@ -481,5 +481,66 @@ public class DatabaseService {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public static boolean isValidoCadastrarUsuarioSorteioCodigoInfluencer(String idUsuario) {
+		boolean isValido = true;
+
+		String query = "SELECT " +
+				" 1 " +
+				" FROM tb_sorteio_influencer sorteio" +
+				" WHERE sorteio.usuario_id = ? ;";
+
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+		){
+
+
+			stm.setString(1, idUsuario);
+
+
+			try(var retorno = stm.executeQuery();){
+				if (retorno.next()) {
+					isValido = false;
+				}
+			}
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return isValido;
+	}
+
+
+
+	public static String findCodigoSorteioByUserId(String idUsuario) {
+		String codigo = null;
+
+		String query = "SELECT " +
+				" codigo " +
+				" FROM tb_sorteio_influencer " +
+				" WHERE usuario_id = ? ;" ;
+
+		try(
+				var conexao = ConnectionFactory.getConnection();
+				var stm = conexao.prepareStatement(query);
+		) {
+
+			stm.setString(1, idUsuario);
+
+			try(var retorno = stm.executeQuery()){
+				while (retorno.next()) {
+					codigo =  retorno.getString("codigo");
+				}
+			}
+		}catch (Exception e) {
+
+			e.printStackTrace();
+			return null;
+		}
+
+		return codigo;
 	}
 }
